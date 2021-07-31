@@ -1,0 +1,11 @@
+points:
+  Berlin:
+    lat: 52.516391
+    lon: 13.378679
+  Hamburg:
+    lat: 53.549531
+    lon: 9.9624856
+
+meteostat:
+  url : "https://meteostat.p.rapidapi.com/point/hourly"
+  sub_key : "data"
