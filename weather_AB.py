@@ -56,8 +56,8 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         raise f"Provider {provider} missing credentials or config"
 
     # setup vars
-    start = pd.to_datetime("now").date()
-    end = start + pd.Timedelta("7d")
+    start = pd.to_datetime("now").date() - + pd.Timedelta("1d")
+    end = start + pd.Timedelta("8d")
 
     # create params to call TODO: adjust to other providers as well
     params_dict = {
