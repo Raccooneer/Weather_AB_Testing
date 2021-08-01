@@ -4,16 +4,36 @@ points:
     lon: 13.378679
   Hamburg:
     lat: 53.549531
-    lon: 9.9624856
+    lon:  9.962485
+  Munich:
+    lat: 48.136400
+    lon: 11.577500
 
 meteostat:
-  url : "https://meteostat.p.rapidapi.com/point/hourly"
+  url: "https://meteostat.p.rapidapi.com/point/hourly"
+  type: "params"
   sub_key : "data"
+  record_path : Null
   start_date_param: "start"
   end_date_param: "end"
+  provider_specific_params: Null
 
 brightsky:
   url: "https://api.brightsky.dev/weather"
+  type: "params"
   sub_key : "weather"
+  record_path : Null
   start_date_param: "date"
   end_date_param: "last_date"
+  provider_specific_params: Null
+
+visualcrossing:
+  url: "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{point}/{start}/{end}"
+  type: "url"
+  sub_key : "days"
+  record_path : "hours"
+  start_date_param: Null
+  end_date_param: Null
+  provider_specific_params:
+    unitGroup: "metric"
+    include: "hours"

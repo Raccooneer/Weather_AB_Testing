@@ -41,8 +41,11 @@ def get_weatherdata_by_provider(provider = "meteostat"):
     """
     # load cretendials
     load_dotenv()
-    auth = json.loads(os.getenv(provider))
-
+    try:
+        auth = json.loads(os.getenv(provider))
+    except TypeError:
+        f"Provider {provider} missing credentials"
+        raise Exception
     # create temp folder if it does not exist
     if not os.path.isdir("temp"):
         os.mkdir("temp")
@@ -52,32 +55,62 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         config = yaml.safe_load(file)
     
     # escape if provider not in config or credentials
-    if auth == "" or provider not in config.keys():
-        raise f"Provider {provider} missing credentials or config"
+    if provider not in config.keys():
+        raise f"Provider {provider} missing config"
 
     # setup vars
     start = pd.to_datetime("now").date() - + pd.Timedelta("1d")
     end = start + pd.Timedelta("8d")
 
-    # create params to call TODO: adjust to other providers as well
-    params_dict = {
-        point :
-            {
-                "lon" : config["points"][point]["lon"],
-                "lat" : config["points"][point]["lat"],
-                config[provider]["start_date_param"] : str(start),
-                config[provider]["end_date_param"] : str(end)
-            }
-        for point in config["points"].keys()}
+    if config[provider]["type"] == "params":
+        # create params to call
+        params_dict = {
+            point :
+                {
+                    "lon" : config["points"][point]["lon"],
+                    "lat" : config["points"][point]["lat"],
+                    config[provider]["start_date_param"] : str(start),
+                    config[provider]["end_date_param"] : str(end)
+                }
+            for point in config["points"].keys()}
 
-    # call and save to temp
-    get_multiple_to_file(
-        url = config[provider]["url"],
-        filename = f"temp/{ provider }.csv",
-        params_dict = params_dict,
-        sub_key = config[provider]["sub_key"],
-        headers = auth
-        )
-    
+        # call and save to temp
+        get_multiple_to_file(
+            url = config[provider]["url"],
+            filename = f"temp/{ provider }.csv",
+            multi_type="params",
+            params_dict = params_dict,
+            sub_key = config[provider]["sub_key"],
+            record_path = config[provider]["record_path"],
+            headers = auth
+            )
+
+    elif config[provider]["type"] == "url":
+        # create params to call
+        params_dict = {
+            **config[provider]["provider_specific_params"],
+            **auth
+        }
+        urls = {
+            point : config[provider]["url"].format(
+                point = point,
+                start = start,
+                end = end
+            ) 
+            for point in config["points"].keys()}
+        # call and save to temp
+        get_multiple_to_file(
+            url = urls,
+            filename = f"temp/{ provider }.csv",
+            multi_type="urls",
+            params_dict = params_dict,
+            sub_key = config[provider]["sub_key"],
+            record_path = config[provider]["record_path"],
+            headers = None
+            )
+
+    else:
+        raise f"provider {provider} misses type"
+
     pass
 # %%
