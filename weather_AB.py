@@ -31,7 +31,7 @@ from src.wrap_psql import post_upsert_postgreSQL
 # ====================================================================================
 
 # %% (1) save data from one provider to file
-def get_weatherdata_by_provider(provider = "meteostat"):
+def get_weatherdata_by_provider(provider = "meteostat", filepath=""):
     """Load weather data by one specified provider.
 
     args:
@@ -41,18 +41,18 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         no return
     """
     # load cretendials
-    load_dotenv()
+    load_dotenv(os.path.join(filepath, ".env"))
     try:
         auth = json.loads(os.getenv(provider))
     except TypeError:
         f"Provider {provider} missing credentials"
         raise Exception
     # create temp folder if it does not exist
-    if not os.path.isdir("temp"):
-        os.mkdir("temp")
+    if not os.path.isdir(os.path.join(filepath, "temp")):
+        os.mkdir(os.path.join(filepath, "temp"))
     
     # load config
-    with open("res/config/config.yaml", "r") as file:
+    with open(os.path.join(filepath, "res/config/config.yaml"), "r") as file:
         config = yaml.safe_load(file)
     
     # escape if provider not in config
@@ -78,7 +78,7 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         # call and save to temp
         get_multiple_to_file(
             url = config[provider]["url"],
-            filename = f"temp/{ provider }.csv",
+            filename = os.path.join(filepath, f"temp/{ provider }.csv"),
             multi_type="params",
             params_dict = params_dict,
             sub_key = config[provider]["sub_key"],
@@ -102,7 +102,7 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         # call and save to temp
         get_multiple_to_file(
             url = urls,
-            filename = f"temp/{ provider }.csv",
+            filename = os.path.join(filepath, f"temp/{ provider }.csv"),
             multi_type="urls",
             params_dict = params_dict,
             sub_key = config[provider]["sub_key"],
@@ -116,7 +116,7 @@ def get_weatherdata_by_provider(provider = "meteostat"):
     pass
 
 # %% (2) transform data and save to DB
-def transform_to_db(provider):
+def transform_to_db(provider, filepath=""):
     """Load and transform data of provider and push to DB in standardized form.
     
     args:
@@ -125,19 +125,23 @@ def transform_to_db(provider):
     return:
         no return
     """
+    # load auth
+    load_dotenv(os.path.join(filepath, ".env"))
+    auth = json.loads(os.getenv("database"))
+
     # load config
-    with open("res/config/config.yaml", "r") as file:
+    with open(os.path.join(filepath, "res/config/config.yaml"), "r") as file:
         config = yaml.safe_load(file)
     # escape if provider not in config
     if provider not in config.keys():
         raise f"Provider {provider} missing config"
 
     # check if file exists
-    if not os.path.isfile(f"temp/{provider}.csv"):
+    if not os.path.isfile(os.path.join(filepath, f"temp/{provider}.csv")):
         raise f"this provider has no temporary file"
 
     # load file
-    df = pd.read_csv(f"temp/{provider}.csv")
+    df = pd.read_csv(os.path.join(filepath, f"temp/{provider}.csv"))
 
     # special operations
     if config[provider]["special_operations"] is not None:
@@ -172,7 +176,7 @@ def transform_to_db(provider):
     )
 
     # post data to db
-    post_upsert_postgreSQL("weather_forecast", df)
+    post_upsert_postgreSQL("weather_forecast", df, auth=auth)
 
     pass
 

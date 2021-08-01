@@ -5,7 +5,6 @@
 #   (1) imports
 #   (2) airflow config
 #   (3) global variables
-#   (4) import private module
 #
 # ####################################################################################
 
@@ -42,14 +41,12 @@ dag = DAG(
 # %% (3) global variables
 project_path = Variable.get("Weather_AB_Testing_path")
 
-# %% (4) import private module
-sys.path.append(project_path)
-import weather_AB
-
 # %% [Markdown] ######################################################################
 #  Section 1 : non-module functions
 #   (1) setup func
-#   (2) cleanup func
+#   (2) fetch wrapper func
+#   (3) forward wrapper func
+#   (4) cleanup func
 # 
 # ####################################################################################
 
@@ -61,14 +58,34 @@ def setup_func(**kwargs):
         os.mkdir(temp_folder)
     pass
 
-# %% (2) cleanup func
+# %% (2) fetch wrapper func
+def fetch_func(provider, **kwargs):
+    """Wrap around fetch function to call from different path."""
+    # import module by provided path
+    sys.path.append(project_path)
+    import weather_AB
+    # call function
+    weather_AB.get_weatherdata_by_provider(provider, filepath = project_path)
+    pass
+
+# %% (3) forward wrapper func
+def forward_func(provider, **kwargs):
+    """Wrap around forward function to call from different path."""
+    # import module by provided path
+    sys.path.append(project_path)
+    import weather_AB
+    # call function
+    weather_AB.transform_to_db(provider, filepath = project_path)
+    pass
+
+# %% (4) cleanup func
 def cleanup_func(**kwargs):
     """Cleanup temporary files and folders"""
     temp_folder = os.path.join(project_path, "temp")
     if os.path.exists(temp_folder):
         for i in os.listdir(temp_folder):
             os.remove(os.path.join(temp_folder, i))
-        os.remove(temp_folder)
+        os.rmdir(temp_folder)
     pass
 
 # %% [Markdown] ######################################################################
@@ -94,7 +111,7 @@ setup = PythonOperator(
 # %% (2) fetch weather data and save temporary: meteostat
 fetch_meteostat = PythonOperator(
     task_id = "fetch_meteostat",
-    python_callable = weather_AB.get_weatherdata_by_provider,
+    python_callable = fetch_func,
     op_kwargs = {"provider" : "meteostat"},
     dag = dag
 )
@@ -102,7 +119,7 @@ fetch_meteostat = PythonOperator(
 # %% (3) fetch weather data and save temporary: brightsky
 fetch_brightsky = PythonOperator(
     task_id = "fetch_brightsky",
-    python_callable = weather_AB.get_weatherdata_by_provider,
+    python_callable = fetch_func,
     op_kwargs = {"provider" : "brightsky"},
     dag = dag
 )
@@ -110,7 +127,7 @@ fetch_brightsky = PythonOperator(
 # %% (4) fetch weather data and save temporary: visualcrossing
 fetch_visualcrossing = PythonOperator(
     task_id = "fetch_visualcrossing",
-    python_callable = weather_AB.get_weatherdata_by_provider,
+    python_callable = fetch_func,
     op_kwargs = {"provider" : "visualcrossing"},
     dag = dag
 )
@@ -118,7 +135,7 @@ fetch_visualcrossing = PythonOperator(
 # %% (5) transform data and push into weather database: meteostat
 forward_meteostat = PythonOperator(
     task_id = "forward_meteostat",
-    python_callable = weather_AB.transform_to_db,
+    python_callable = forward_func,
     op_kwargs = {"provider" : "meteostat"},
     dag = dag
 )
@@ -126,7 +143,7 @@ forward_meteostat = PythonOperator(
 # %% (6) transform data and push into weather database: brightsky
 forward_brightsky = PythonOperator(
     task_id = "forward_brightsky",
-    python_callable = weather_AB.transform_to_db,
+    python_callable = forward_func,
     op_kwargs = {"provider" : "brightsky"},
     dag = dag
 )
@@ -134,7 +151,7 @@ forward_brightsky = PythonOperator(
 # %% (7) transform data and push into weather database: visualcrossing
 forward_visualcrossing = PythonOperator(
     task_id = "forward_visualcrossing",
-    python_callable = weather_AB.transform_to_db,
+    python_callable = forward_func,
     op_kwargs = {"provider" : "visualcrossing"},
     dag = dag
 )
