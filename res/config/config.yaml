@@ -9,3 +9,11 @@ points:
 meteostat:
   url : "https://meteostat.p.rapidapi.com/point/hourly"
   sub_key : "data"
+  start_date_param: "start"
+  end_date_param: "end"
+
+brightsky:
+  url: "https://api.brightsky.dev/weather"
+  sub_key : "weather"
+  start_date_param: "date"
+  end_date_param: "last_date"

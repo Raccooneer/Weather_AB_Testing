@@ -65,8 +65,8 @@ def get_weatherdata_by_provider(provider = "meteostat"):
             {
                 "lon" : config["points"][point]["lon"],
                 "lat" : config["points"][point]["lat"],
-                "start" : str(start),
-                "end" : str(end)
+                config[provider]["start_date_param"] : str(start),
+                config[provider]["end_date_param"] : str(end)
             }
         for point in config["points"].keys()}
 
@@ -80,3 +80,4 @@ def get_weatherdata_by_provider(provider = "meteostat"):
         )
     
     pass
+# %%
