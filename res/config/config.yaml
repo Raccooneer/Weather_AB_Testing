@@ -1,3 +1,4 @@
+# The Points / Cities for which data is collected for the experiment
 points:
   Berlin:
     lat: 52.516391
@@ -9,6 +10,8 @@ points:
     lat: 48.136400
     lon: 11.577500
 
+# Providers and their special values relevant for fetching and transforming
+#   data to save to DB
 meteostat:
   url: "https://meteostat.p.rapidapi.com/point/hourly"
   type: "params"
@@ -17,6 +20,17 @@ meteostat:
   start_date_param: "start"
   end_date_param: "end"
   provider_specific_params: Null
+  mapping:
+    time: "weather_time"
+    temp: "temperature"
+    dwpt: "dewpoint"
+    rhum: "humidity"
+    prcp: "precipintensity"
+    wdir: "windbearing"
+    wspd: "windspeed"
+    wpgt: "windgust"
+    pres: "pressure"
+  special_operations: Null
 
 brightsky:
   url: "https://api.brightsky.dev/weather"
@@ -26,6 +40,21 @@ brightsky:
   start_date_param: "date"
   end_date_param: "last_date"
   provider_specific_params: Null
+  mapping:
+    timestamp: "weather_time"
+    temperature: "temperature"
+    dew_point: "dewpoint"
+    relative_humidity: "humidity"
+    precipitation: "precipintensity"
+    wind_direction: "windbearing"
+    wind_speed: "windspeed"
+    wind_gust_speed: "windgust"
+    pressure_msl: "pressure"
+    cloud_cover: "cloudcover"
+    visibility: "visibility"
+    icon: "icon"
+    condition: "summary"
+  special_operations: Null
 
 visualcrossing:
   url: "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{point}/{start}/{end}"
@@ -37,3 +66,23 @@ visualcrossing:
   provider_specific_params:
     unitGroup: "metric"
     include: "hours"
+  mapping:
+    timestamp : "weather_time"
+    temp : "temperature"
+    feelslike : "apparenttemperature"
+    dew : "dewpoint"
+    humidity : "humidity"
+    precip : "precipintensity"
+    precipprob : "precipprobability"
+    preciptype : "preciptype"
+    winddir : "windbearing"
+    windspeed : "windspeed"
+    windgust : "windgust"
+    pressure : "pressure"
+    visibility : "visibility"
+    cloudcover : "cloudcover"
+    uvindex : "uvindex"
+    conditions : "summary"
+    icon : "icon"
+  special_operations:
+    epoch_to_timestamp: "timestamp"
