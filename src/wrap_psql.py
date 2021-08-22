@@ -42,7 +42,7 @@ def post_generic_postgreSQL(statement, auth=auth):
     Use for create table, create views!
 
     params
-        auch: database connection credentials 
+        auth: database connection credentials 
         statement: an sql statet statement
     
     return

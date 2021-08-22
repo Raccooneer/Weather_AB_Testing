@@ -16,7 +16,7 @@ import json
 from dotenv import load_dotenv
 
 # %% (2) personal module imports
-# for testing and debugging only
+# NOTE: for testing and debugging only
 # %load_ext autoreload
 # %autoreload 2
 from src.wrap_requests import get_multiple_to_file
@@ -31,8 +31,8 @@ from src.wrap_psql import post_upsert_postgreSQL
 # ====================================================================================
 
 # %% (1) save data from one provider to file
-def get_weatherdata_by_provider(provider = "meteostat", filepath=""):
-    """Load weather data by one specified provider.
+def get_weatherdata_by_provider(provider, filepath=""):
+    """Load weather data of one specified provider.
 
     args:
         provider (str) : provider that has to be present in the config
@@ -40,7 +40,7 @@ def get_weatherdata_by_provider(provider = "meteostat", filepath=""):
     return:
         no return
     """
-    # load cretendials
+    # load credentials
     load_dotenv(os.path.join(filepath, ".env"))
     try:
         auth = json.loads(os.getenv(provider))
@@ -117,7 +117,7 @@ def get_weatherdata_by_provider(provider = "meteostat", filepath=""):
 
 # %% (2) transform data and save to DB
 def transform_to_db(provider, filepath=""):
-    """Load and transform data of provider and push to DB in standardized form.
+    """Load and transform data of provider and push to DB in standardized data structure.
     
     args:
         provider (str) : provider that has to be present in the config

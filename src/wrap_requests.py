@@ -38,6 +38,9 @@ def get_multiple_to_file(url, filename, multi_type=None, headers=None, params_di
 
     exceptions:
         Raises Exception of wrong Authorization
+
+    return:
+        None (save temporary file)
     """
     # setup
     session_provided = session is not None
@@ -122,6 +125,9 @@ def get_to_dataframe(url, headers=None, params={}, sub_key=None, record_path=Non
 
     exceptions:
         Raises Exception of wrong Authorization
+    
+    return:
+        nameless (df) : normalized json of response from API
     """
     # open session if not provided
     session_provided = True
