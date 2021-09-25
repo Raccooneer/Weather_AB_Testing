@@ -60,7 +60,7 @@ def get_weatherdata_by_provider(provider, filepath=""):
         raise f"Provider {provider} missing config"
 
     # setup vars
-    start = pd.to_datetime("now").date() - + pd.Timedelta("1d")
+    start = pd.to_datetime("now").date() - pd.Timedelta("1d")
     end = start + pd.Timedelta("9d")
 
     if config[provider]["type"] == "params":
