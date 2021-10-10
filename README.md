@@ -14,6 +14,16 @@ As showcase project, the git shows:
 * Various data transformations with pandas
 * Various data visualization with matplotlib and seaborn
 
+## Disclaimer & acknowledgement
+
+This project is not intended to advertise for a particular weather data provider or to devalue the quality of a weather data provider's forecast quality. A very basic assumption behind this project is the uncertainty about this quality, which can be expected to change over time such that the relative quality of providers to each other can change. Hence, between data collection and evaluation, the data is anonymized in two steps: (1) providers are randomly assigned a letter from A to C, and (2) simulated data will be used based on the forecast error distribution instead of the as-is data.
+
+
+The anonymization step is not included in the repository!
+
+
+I want to thank all weather data providers for providing their data under terms and licenses, or explicit approval that make this project possible.
+
 ## Motivation
 
 Weather data can be a crucial factor for a variety that impacts business activities. Certain products sell more during hot and sunny days as in the typical ice cream stand example. Other products may sell more during cold and rainy days such as e-commerce shops that may attract more customers when these customers are limited in doing outdoor activities. Certain activities may mot be conducted during rainy days ranging from outdoor weddings to certain construction site activities. While the weather can change quite fast, operations may, however, not have this opportunity. Even quite flexible activities can only change to a limited degree and this flexibility usually comes at a price.
@@ -39,13 +49,15 @@ TODO: write details on analysis of temperature accuracy
 
 ## Data
 
-The analysis collects 1-7 day forecasts as well as the actual weather from two provider.
+The analysis collects 1-7 day forecasts as well as the actual weather from three provider.
 
 ### Meteostat
 
 Meteostat has a freemium model that allows 500 free calls per month. It accepts donations as well. The rate limit is probably not enough for professional purposes but satisfies for testing and this experimental design. 
 
 Using the `point/hourly` API endpoint (via rapidapi), the payload looks like this (data not displayed). The data comes in UTC, but the timestamp doesn't carry timezone information:
+
+According to the [meteostat website](https://dev.meteostat.net/terms.html#license), the data is provided under a CC-BY-NC 4.0 license only excluding the redistribution of "as-is" data for commercial purposes outside of the US. This license enables this project.
 
 ```
 {'meta': {'generated': '2021-08-01 11:05:41',
@@ -88,6 +100,8 @@ Thereby, the [documentation](https://dev.meteostat.net/api/stations/hourly.html#
 Brightsky is part of the open data program of the `Deutsche Wetter Dienst`, the german weather service, and no cost are associated with this API. 
 
 Using the `weather` API endpoint, the payload looks like this (data not displayed). The data comes in UTC and the timestamp does carry timezone information:
+
+According to the [brightsky website](https://brightsky.dev/), the data is provided by the DWD (German weather service - Deutscher Wetterdienst) and underlie the terms of use of the DWD. The DWD [terms of use](https://www.dwd.de/EN/service/copyright/copyright_artikel.html) allows that all spatial data and spatial data services available for free access may be used without any restrictions provided that the source is acknowledged, which is done with this paragraph. These terms enable this project.
 
 ```
 {'weather': [{'timestamp': '2021-07-31T00:00:00+00:00',
@@ -157,6 +171,8 @@ Thereby, the [documentation](https://brightsky.dev/docs/#tag--weather) explains 
 VisualCrossing has a freemium model that allows 1000 free results per day (an 7-day forecast is about 25 results). The rate limit is probably not enough for professional purposes but satisfies for testing and this experimental design.
 
 Using the `services/timeline` API endpoint, the payload looks like this (data not displayed). The data comes in local time and includes the unix epoch as well:
+
+The approval to use the data from visualCrossing was requested by email under description of this project incl. the steps for anonymization described in the disclaimer above. The approval was obtained as answer to the requesting email. This enables this project.
 
 ```
 {
