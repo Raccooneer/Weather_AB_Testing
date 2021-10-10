@@ -134,3 +134,4 @@ temp/*
 
 # test files
 test.*
+scripts/anonymization.ipynb

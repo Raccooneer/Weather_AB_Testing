@@ -1,7 +1,8 @@
 CREATE TABLE weather_forecast (
-    id                  SERIAL PRIMARY KEY,
-    create_time         TIMESTAMPTZ,
     weather_time        TIMESTAMPTZ,
+    city                TEXT,
+    forecast_type       TEXT,
+    provider            TEXT,
     temperature         NUMERIC,
     apparenttemperature NUMERIC,
     dewpoint            NUMERIC,
@@ -18,7 +19,6 @@ CREATE TABLE weather_forecast (
     uvindex             NUMERIC,
     summary             TEXT,
     icon                TEXT,
-    city                TEXT,
-    provider            TEXT,
-    forecast_type       TEXT
+    create_time         TIMESTAMPTZ,
+    PRIMARY KEY (weather_time, city, forecast_type, provider)
 )
